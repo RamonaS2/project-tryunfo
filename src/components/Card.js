@@ -12,7 +12,7 @@ class Card extends React.Component {
     const { cardRare } = this.props;
     const { cardTrunfo } = this.props;
     let trunfo;
-    if (cardTrunfo === true) trunfo = (<p data-testid="trunfo-card">{ cardTrunfo }</p>);
+    if (cardTrunfo === true) trunfo = (<p data-testid="trunfo-card">Super Trunfo</p>);
     return (
       <div>
         <p data-testid="name-card">{ cardName }</p>
