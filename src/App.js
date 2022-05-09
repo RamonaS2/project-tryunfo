@@ -2,6 +2,19 @@ import React from 'react';
 import Card from './components/Card';
 import Form from './components/Form';
 
+const stateInicial = {
+  cardName: '',
+  cardDescription: '',
+  cardAttr1: '0',
+  cardAttr2: '0',
+  cardAttr3: '0',
+  cardImage: '',
+  cardRare: '',
+  cardTrunfo: false,
+  // hasTrunfo: 'false',
+  isSaveButtonDisabled: true,
+};
+
 class App extends React.Component {
   constructor() {
     super();
@@ -17,9 +30,11 @@ class App extends React.Component {
       cardTrunfo: false,
       // hasTrunfo: 'false',
       isSaveButtonDisabled: true,
+      newCard: [],
     };
 
     this.onInputChange = this.onInputChange.bind(this);
+    this.onSaveButtonClick = this.onSaveButtonClick.bind(this);
   }
 
   onInputChange(e) {
@@ -32,6 +47,36 @@ class App extends React.Component {
     this.setState({
       [name]: value,
     }, () => this.validandoButton());
+  }
+
+  onSaveButtonClick(event) {
+    event.preventDefault();
+
+    const {
+      cardName,
+      cardDescription,
+      cardAttr1,
+      cardAttr2,
+      cardAttr3,
+      cardImage,
+      cardRare,
+    } = this.state;
+
+    const salveCard = [{
+      cardName,
+      cardDescription,
+      cardAttr1,
+      cardAttr2,
+      cardAttr3,
+      cardImage,
+      cardRare,
+    }];
+
+    this.setState((prevState) => ({
+      newCard: [...prevState.newCard, ...salveCard],
+    }));
+
+    this.setState(stateInicial);
   }
 
   validandoButton() {
@@ -86,6 +131,7 @@ class App extends React.Component {
           cardTrunfo={ cardTrunfo }
           onInputChange={ this.onInputChange }
           isSaveButtonDisabled={ isSaveButtonDisabled }
+          onSaveButtonClick={ this.onSaveButtonClick }
         />
         <Card
           cardName={ cardName }
