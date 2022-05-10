@@ -49,6 +49,7 @@ class App extends React.Component {
     this.onInputChange = this.onInputChange.bind(this);
     this.onSaveButtonClick = this.onSaveButtonClick.bind(this);
     this.verify = this.verify.bind(this);
+    this.removeCard = this.removeCard.bind(this);
   }
 
   onInputChange({ target }) {
@@ -133,6 +134,21 @@ class App extends React.Component {
     return this.setState({ isSaveButtonDisabled: true });
   }
 
+  removeCard(cardSelect) {
+    const { newCard } = this.state;
+    const novaList = newCard.filter((card) => card.cardName !== cardSelect);
+    if (novaList.some(({ cardTrunfo }) => cardTrunfo === true)) {
+      this.setState({
+        newCard: novaList,
+      });
+    } else {
+      this.setState({
+        newCard: novaList,
+        hasTrunfo: false,
+      });
+    }
+  }
+
   render() {
     const { cardName } = this.state;
     const { cardDescription } = this.state;
@@ -172,21 +188,34 @@ class App extends React.Component {
           cardImage={ cardImage }
           cardRare={ cardRare }
           cardTrunfo={ cardTrunfo }
+          removeCard={ this.removeCard }
         />
+        <div>
+          { newCard.map((e) => (
+            <>
+              <Card
+                key={ e.cardName }
+                cardName={ e.cardName }
+                cardDescription={ e.cardDescription }
+                cardAttr1={ e.cardAttr1 }
+                cardAttr2={ e.cardAttr2 }
+                cardAttr3={ e.cardAttr3 }
+                cardRare={ e.cardRare }
+                cardTrunfo={ e.cardTrunfo }
+                cardImage={ e.cardImage }
+              />
+              <button
+                name="removeCard"
+                type="button"
+                onClick={ () => this.removeCard(e.cardName) }
+                data-testid="delete-button"
+              >
+                Excluir
+              </button>
 
-        { newCard.map((e) => (
-          <Card
-            key={ e.cardName }
-            cardName={ e.cardName }
-            cardDescription={ e.cardDescription }
-            cardAttr1={ e.cardAttr1 }
-            cardAttr2={ e.cardAttr2 }
-            cardAttr3={ e.cardAttr3 }
-            cardRare={ e.cardRare }
-            cardTrunfo={ e.cardTrunfo }
-            cardImage={ e.cardImage }
-          />
-        ))}
+            </>
+          ))}
+        </div>
       </div>
     );
   }
