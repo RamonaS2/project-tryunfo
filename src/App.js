@@ -44,6 +44,9 @@ class App extends React.Component {
       hasTrunfo: false,
       isSaveButtonDisabled: true,
       newCard: [],
+      filt: '',
+      listFilter: [],
+      trunfo: false,
     };
 
     this.onInputChange = this.onInputChange.bind(this);
@@ -53,10 +56,7 @@ class App extends React.Component {
   }
 
   onInputChange({ target }) {
-    // e.preventDefault();
-    // const { target } = e;
     const { name } = target;
-    // const { value } = target;
     const value = target.type === 'checkbox' ? target.checked : target.value;
 
     this.setState({
@@ -68,8 +68,7 @@ class App extends React.Component {
     event.preventDefault();
 
     const {
-      cardName,
-      cardDescription,
+      cardName, cardDescription,
       cardAttr1,
       cardAttr2,
       cardAttr3,
@@ -99,25 +98,29 @@ class App extends React.Component {
     this.setState(stateInicial, () => { this.verify(); });
   }
 
+  inputFilter = ({ target }) => {
+    const { name, value } = target;
+    this.setState({
+      [name]: value,
+    }, () => {
+      const { filt, newCard } = this.state;
+
+      const listFilter = newCard.filter((card) => card.cardName.includes(filt));
+
+      this.setState({
+        listFilter,
+      });
+    });
+  }
+
   verify() {
     const { newCard } = this.state;
     if (newCard.some((e) => e.hasTrunfo === true)) {
       return this.setState(stateHasTrue);
     }
-    // { <p>Você já tem um Super Trunfo em seu baralho</p>; }
   }
 
   validandoButton(state) {
-    // const {
-    //   cardName,
-    //   cardDescription,
-    //   cardAttr1,
-    //   cardAttr2,
-    //   cardAttr3,
-    //   cardImage,
-    //   cardRare,
-    // } = this.state;
-
     const maxTotal = 210;
     const max = 90;
 
@@ -150,17 +153,18 @@ class App extends React.Component {
   }
 
   render() {
-    const { cardName } = this.state;
-    const { cardDescription } = this.state;
-    const { cardAttr1 } = this.state;
-    const { cardAttr2 } = this.state;
-    const { cardAttr3 } = this.state;
-    const { cardImage } = this.state;
-    const { cardRare } = this.state;
-    const { cardTrunfo } = this.state;
-    const { isSaveButtonDisabled } = this.state;
-    const { hasTrunfo } = this.state;
-    const { newCard } = this.state;
+    const { cardName, cardDescription, cardAttr1, cardAttr2, cardAttr3,
+      cardImage, cardRare, cardTrunfo, isSaveButtonDisabled,
+      hasTrunfo, newCard, filt, listFilter, trunfo } = this.state;
+
+    let coringa = [];
+    if (trunfo === true) {
+      coringa = newCard.filter((carta) => carta.cardTrunfo === true);
+    } else if (filt.length === 0) {
+      coringa = newCard;
+    } else if (filt.length > 0) {
+      coringa = listFilter;
+    }
 
     return (
       <div>
@@ -190,9 +194,31 @@ class App extends React.Component {
           cardTrunfo={ cardTrunfo }
           removeCard={ this.removeCard }
         />
+
+        <label htmlFor="filtrar">
+          <input
+            id="filtrar"
+            name="filt"
+            type="text"
+            data-testid="name-filter"
+            onChange={ this.inputFilter }
+          />
+        </label>
+
+        <label htmlFor="trunfo">
+          Super Trunfo:
+          <input
+            type="checkbox"
+            data-testid="trunfo-filter"
+            id="trunfo"
+            name="trunfo"
+            onChange={ this.onInputChange }
+          />
+        </label>
+
         <div>
-          { newCard.map((e) => (
-            <>
+          { coringa.map((e) => (
+            <div key={ e.cardName }>
               <Card
                 key={ e.cardName }
                 cardName={ e.cardName }
@@ -213,7 +239,7 @@ class App extends React.Component {
                 Excluir
               </button>
 
-            </>
+            </div>
           ))}
         </div>
       </div>
